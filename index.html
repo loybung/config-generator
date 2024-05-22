@@ -10,17 +10,21 @@
     <style>
         body {
             font-family: 'Roboto', sans-serif;
-            background-color: #f4f4f4;
+            background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/A_black_image.jpg/640px-A_black_image.jpg');
+            background-size: cover;
+            background-position: center;
             padding: 20px;
+            color: white;
         }
 
         .container {
-            background: #fff;
+            background: rgba(255, 255, 255, 0.8);
             padding: 30px;
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             max-width: 900px;
             margin: 0 auto;
+            color: #333;
         }
 
         h1 {
@@ -79,10 +83,6 @@
             background-color: #4a47d6;
             border-color: #4a47d6;
         }
-
-        .btn-copy {
-            margin-left: 10px;
-        }
     </style>
 </head>
 
@@ -100,7 +100,7 @@
         <form id="config-form">
             <div class="form-group">
                 <label for="city">เมือง:</label>
-                <input type="text" class="form-control" id="city" name="city" value="Bangkok" placeholder="ค่าเริ่มต้น Bangkoks">
+                <input type="text" class="form-control" id="city" name="city" value="Bangkok" placeholder="ค่าเริ่มต้น Bangkok">
             </div>
             <div class="form-group">
                 <label for="delay">หน่วงเวลา (วินาที):</label>
@@ -163,7 +163,7 @@
 
             <div id="type2-config" style="display: none;">
                 <div id="emoji-text-entries">
-                    <h3>Status:</h3>
+                    <h3>สถานะ:</h3>
                     <div class="form-group config-entry">
                         <label>Emoji:</label>
                         <input type="text" class="form-control emoji" value="🎃">
@@ -172,22 +172,24 @@
                         <button type="button" class="btn btn-danger btn-sm" onclick="removeEntry(this)">ลบ</button>
                     </div>
                 </div>
-                <button type="button" class="btn btn-primary" onclick="addEntry('emoji-text')">เพิ่ม Status</button>
-            </div>
-
-            <div class="buttons mt-4">
-                <button type="button" class="btn btn-success" onclick="generateConfig()">สร้าง</button>
-                <button type="button" class="btn btn-secondary btn-copy" onclick="copyConfig()">คัดลอก</button>
+                <button type="button" class="btn btn-primary" onclick="addEntry('emoji-text')">เพิ่มสถานะ</button>
             </div>
         </form>
+        <div class="buttons mt-4">
+            <hr>
+            <button type="button" class="btn btn-secondary btn-copy" onclick="copyConfig()">คัดลอก</button>
+        </div>
         <pre id="output" class="mt-4"></pre>
     </div>
 
     <script>
+        document.getElementById('config-form').addEventListener('input', generateConfig);
+
         function changeConfigType() {
             const type = document.getElementById('config-type').value;
             document.getElementById('type1-config').style.display = type === 'type1' ? 'block' : 'none';
             document.getElementById('type2-config').style.display = type === 'type2' ? 'block' : 'none';
+            generateConfig();
         }
 
         function addEntry(type) {
@@ -215,8 +217,8 @@
         }
 
         function removeEntry(button) {
-            const entry = button.parentElement;
-            entry.remove();
+            button.parentElement.remove();
+            generateConfig();
         }
 
         function generateConfig() {
@@ -240,7 +242,7 @@
 
                 config = {
                     setup: {
-                        city: form.city.value,
+                        city: form.city.value || "Bangkok",
                         delay: parseInt(form.delay.value) || 0
                     },
                     config: {
@@ -292,4 +294,5 @@
         changeConfigType();
     </script>
 </body>
+
 </html>
