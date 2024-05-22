@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LOYBUNG | Config Generator</title>
+    <link rel="icon" href="https://img5.pic.in.th/file/secure-sv1/20230513_185755.png" type="image/x-icon">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+        .form-group textarea {
+            resize: vertical;
+        }
+        .buttons {
+            margin-top: 20px;
+        }
+        .buttons button {
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        .buttons button:disabled {
+            background-color: #ccc;
+        }
+        pre {
+            background: #333;
+            color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            overflow-x: auto;
+        }
+        .config-entry {
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 5px;
+            background: #f9f9f9;
+            position: relative;
+        }
+        .config-entry button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 5px 10px;
+            background-color: red;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Config Generator</h1>
+        <div class="form-group">
+            <label for="config-type">ประเภทของ Config:</label>
+            <select id="config-type" onchange="changeConfigType()">
+                <option value="type1">Streaming</option>
+                <option value="type2">Custom Status</option>
+            </select>
+        </div>
+
+        <form id="config-form">
+            <div class="form-group">
+                <label for="city">เมือง:</label>
+                <input type="text" id="city" name="city" value="Bangkok">
+            </div>
+            <div class="form-group">
+                <label for="delay">หน่วงเวลา (วินาที):</label>
+                <input type="number" id="delay" name="delay" value="5">
+            </div>
+
+            <div id="type1-config" style="display: none;">
+                <div class="form-group">
+                    <label for="watch-url">Watch URL:</label>
+                    <textarea id="watch-url" name="watch-url"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="timestamp">Timestamp:</label>
+                    <input type="text" id="timestamp"
+                    name="timestamp" value="{start}">
+                </div>
+                <div class="form-group">
+                    <label for="text-1">Text 1:</label>
+                    <textarea id="text-1" name="text-1"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="text-2">Text 2:</label>
+                    <textarea id="text-2" name="text-2"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="text-3">Text 3:</label>
+                    <textarea id="text-3" name="text-3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="bigimg">Big Image:</label>
+                    <textarea id="bigimg" name="bigimg"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="smallimg">Small Image:</label>
+                    <textarea id="smallimg" name="smallimg"></textarea>
+                </div>
+                <div id="button-1-entries">
+                    <h3>ปุ่ม 1:</h3>
+                    <div class="form-group config-entry">
+                        <label>Button Name:</label>
+                        <input type="text" class="button-name" value="">
+                        <label>Button URL:</label>
+                        <input type="text" class="button-url" value="">
+                        <button type="button" onclick="removeEntry(this)">ลบ</button>
+                    </div>
+                </div>
+                <div class="buttons">
+                    <button type="button" onclick="addEntry('button-1')">เพิ่มปุ่ม 1</button>
+                </div>
+                <div id="button-2-entries">
+                    <h3>ปุ่ม 2:</h3>
+                    <div class="form-group config-entry">
+                        <label>Button Name:</label>
+                        <input type="text" class="button-name" value="">
+                        <label>Button URL:</label>
+                        <input type="text" class="button-url" value="">
+                        <button type="button" onclick="removeEntry(this)">ลบ</button>
+                    </div>
+                </div>
+                <div class="buttons">
+                    <button type="button" onclick="addEntry('button-2')">เพิ่มปุ่ม 2</button>
+                </div>
+            </div>
+
+            <div id="type2-config" style="display: none;">
+                <div id="emoji-text-entries">
+                    <div class="form-group config-entry">
+                        <label>Emoji:</label>
+                        <input type="text" class="emoji" value="🎃">
+                        <label>Text:</label>
+                        <input type="text" class="text" value="Text 1">
+                        <button type="button" onclick="removeEntry(this)">ลบ</button>
+                    </div>
+                </div>
+                <div class="buttons">
+                    <button type="button" onclick="addEntry('emoji-text')">เพิ่ม Status</button>
+                </div>
+            </div>
+
+            <div class="buttons">
+                <button type="button" onclick="generateConfig()">สร้างการตั้งค่า</button>
+                <button type="button" onclick="copyConfig()">คัดลอกการตั้งค่า</button>
+            </div>
+        </form>
+        <pre id="output"></pre>
+    </div>
+
+    <script>
+        function changeConfigType() {
+            const type = document.getElementById('config-type').value;
+            document.getElementById('type1-config').style.display = type === 'type1' ? 'block' : 'none';
+            document.getElementById('type2-config').style.display = type === 'type2' ? 'block' : 'none';
+        }
+
+        function addEntry(type) {
+            const container = document.getElementById(`${type}-entries`);
+            const newEntry = document.createElement('div');
+            newEntry.className = 'form-group config-entry';
+            if (type === 'emoji-text') {
+                newEntry.innerHTML = `
+                    <label>Emoji:</label>
+                    <input type="text" class="emoji" value="">
+                    <label>Text:</label>
+                    <input type="text" class="text" value="">
+                    <button type="button" onclick="removeEntry(this)">ลบ</button>
+                `;
+            } else {
+                newEntry.innerHTML = `
+                    <label>Button Name:</label>
+                    <input type="text" class="button-name">
+                    <label>Button URL:</label>
+                    <input type="text" class="button-url">
+                    <button type="button" onclick="removeEntry(this)">ลบ</button>
+                `;
+            }
+            container.appendChild(newEntry);
+        }
+
+        function removeEntry(button) {
+            const entry = button.parentElement;
+            entry.remove();
+        }
+
+        function generateConfig() {
+            const form = document.getElementById('config-form');
+            const type = document.getElementById('config-type').value;
+
+            let config;
+            if (type === 'type1') {
+                const button1Entries = document.querySelectorAll('#button-1-entries .config-entry');
+                const button2Entries = document.querySelectorAll('#button-2-entries .config-entry');
+
+                const button1Array = Array.from(button1Entries).map(entry => ({
+                    name: entry.querySelector('.button-name').value,
+                    url: entry.querySelector('.button-url').value
+                }));
+
+                const button2Array = Array.from(button2Entries).map(entry => ({
+                    name: entry.querySelector('.button-name').value,
+                    url: entry.querySelector('.button-url').value
+                }));
+
+                config = {
+                    setup: {
+                        city: form.city.value,
+                        delay: parseInt(form.delay.value) || 0
+                    },
+                    config: {
+                        options: {
+                            "watch-url": form['watch-url'].value.split('\n').map(url => url.trim()).filter(url => url),
+                            timestamp: form.timestamp.value
+                        },
+                        "text-1": form['text-1'].value.split('\n').map(text => text.trim()).filter(text => text),
+                        "text-2": form['text-2'].value.split('\n').map(text => text.trim()).filter(text => text),
+                        "text-3": form['text-3'].value.split('\n').map(text => text.trim()).filter(text => text),
+                        bigimg: form.bigimg.value.split('\n').map(img => img.trim()).filter(img => img),
+                        smallimg: form.smallimg.value.split('\n').map(img => img.trim()).filter(img => img),
+                        "button-1": button1Array,
+                        "button-2": button2Array
+                    }
+                };
+            } else if (type === 'type2') {
+                const emojiTextEntries = document.querySelectorAll('#emoji-text-entries .config-entry');
+
+                const emojiTextArray = Array.from(emojiTextEntries).map(entry => ({
+                    emoji: entry.querySelector('.emoji').value,
+                    text: entry.querySelector('.text').value
+                }));
+
+                config = {
+                    setup: {
+                        city: form.city.value,
+                        delay: parseInt(form.delay.value) || 0
+                    },
+                    config: emojiTextArray
+                };
+            }
+
+            document.getElementById('output').textContent = JSON.stringify(config, null, 2);
+        }
+
+        function copyConfig() {
+            const outputElement = document.getElementById('output');
+            const textToCopy = outputElement.textContent;
+
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                alert('คัดลอกการตั้งค่าเรียบร้อยแล้ว');
+            }).catch(err => {
+                console.error('ไม่สามารถคัดลอกข้อความได้:', err);
+            });
+        }
+
+        // Initialize the form with the default config type
+        changeConfigType();
+    </script>
+</body>
+</html>
